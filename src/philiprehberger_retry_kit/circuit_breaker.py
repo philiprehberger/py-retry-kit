@@ -33,6 +33,11 @@ class CircuitBreaker:
         self._on_state_change = on_state_change
         self._on_circuit_open = on_circuit_open
 
+        if failure_threshold < 1:
+            raise ValueError("failure_threshold must be at least 1")
+        if reset_timeout <= 0:
+            raise ValueError("reset_timeout must be positive")
+
         self._state = CircuitState.CLOSED
         self._failures = 0
         self._last_failure_time = 0.0
