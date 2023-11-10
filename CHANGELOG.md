@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 (2026-03-27)
+
+- Add context manager support (`__enter__` / `__exit__`) to `CircuitBreaker`
+- Add preset functions (`exponential`, `gentle`, `network_request`, `database_query`) with `jitter` parameter
+- Add 8 badges, Support section, and compliance fixes to README
+- Add `[tool.pytest.ini_options]` and `[tool.mypy]` to pyproject.toml
+- Add `.github/` issue templates, PR template, and Dependabot config
+
 ## 0.2.3
 
 - Add Development section to README

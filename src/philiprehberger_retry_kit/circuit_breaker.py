@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import time
 from enum import Enum
-from typing import TypeVar, Callable, Awaitable
+from typing import TypeVar, Callable, Awaitable, Any
 
 T = TypeVar("T")
 
@@ -42,6 +42,37 @@ class CircuitBreaker:
         self._failures = 0
         self._last_failure_time = 0.0
         self._half_open_attempts = 0
+
+    def __enter__(self) -> CircuitBreaker:
+        if self._state == CircuitState.OPEN:
+            if time.monotonic() - self._last_failure_time >= self._reset_timeout:
+                self._transition(CircuitState.HALF_OPEN)
+                self._half_open_attempts = 0
+            else:
+                raise CircuitOpenError()
+        return self
+
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: Any,
+    ) -> None:
+        if exc_type is not None:
+            self._failures += 1
+            self._last_failure_time = time.monotonic()
+            if self._state == CircuitState.HALF_OPEN:
+                self._transition(CircuitState.OPEN)
+                if self._on_circuit_open:
+                    self._on_circuit_open(self._failures)
+            elif self._failures >= self._failure_threshold:
+                self._transition(CircuitState.OPEN)
+                if self._on_circuit_open:
+                    self._on_circuit_open(self._failures)
+        else:
+            if self._state == CircuitState.HALF_OPEN:
+                self._transition(CircuitState.CLOSED)
+            self._failures = 0
 
     @property
     def state(self) -> CircuitState:
