@@ -64,7 +64,7 @@ from philiprehberger_retry_kit import CircuitBreaker, CircuitOpenError
 breaker = CircuitBreaker(
     failure_threshold=5,
     reset_timeout=30.0,
-    on_state_change=lambda from_s, to_s: print(f"Circuit: {from_s} → {to_s}"),
+    on_state_change=lambda from_s, to_s: print(f"Circuit: {from_s} -> {to_s}"),
 )
 
 try:
@@ -78,6 +78,19 @@ except CircuitOpenError:
 ```python
 result = await breaker.async_call(lambda: async_fetch_data())
 ```
+
+## API Reference
+
+| Function / Class | Description |
+|---|---|
+| `retry(fn, *, max_attempts=3, backoff="exponential", initial_delay=1.0, max_delay=30.0, jitter=True, retry_on=None, on_retry=None, on_success=None, on_failure=None)` | Retry a callable with configurable backoff |
+| `async_retry(fn, *, ...)` | Async version of `retry()` with the same parameters |
+| `CircuitBreaker(failure_threshold=5, reset_timeout=30.0, half_open_max_attempts=1, on_state_change=None, on_circuit_open=None)` | Circuit breaker that fails fast after repeated failures |
+| `CircuitBreaker.call(fn)` | Execute function through the circuit breaker |
+| `CircuitBreaker.async_call(fn)` | Async version of `call()` |
+| `RetryError` | Raised when all retry attempts fail (`.attempts`, `.last_error`) |
+| `CircuitOpenError` | Raised when circuit breaker is open |
+| `presets` | Dict of preset configs: `"aggressive"`, `"gentle"`, `"network_request"`, `"database_query"` |
 
 ## License
 

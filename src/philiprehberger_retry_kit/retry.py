@@ -50,6 +50,13 @@ def retry(
     on_success: Callable[[Any, int], None] | None = None,
     on_failure: Callable[[Exception, int], None] | None = None,
 ) -> T:
+    if max_attempts < 1:
+        raise ValueError("max_attempts must be at least 1")
+    if backoff not in ("exponential", "linear", "fixed"):
+        raise ValueError(f"Invalid backoff strategy: {backoff}")
+    if initial_delay < 0:
+        raise ValueError("initial_delay must be non-negative")
+
     last_error: Exception | None = None
 
     for attempt in range(1, max_attempts + 1):
@@ -93,6 +100,13 @@ async def async_retry(
     on_success: Callable[[Any, int], None] | None = None,
     on_failure: Callable[[Exception, int], None] | None = None,
 ) -> T:
+    if max_attempts < 1:
+        raise ValueError("max_attempts must be at least 1")
+    if backoff not in ("exponential", "linear", "fixed"):
+        raise ValueError(f"Invalid backoff strategy: {backoff}")
+    if initial_delay < 0:
+        raise ValueError("initial_delay must be non-negative")
+
     last_error: Exception | None = None
 
     for attempt in range(1, max_attempts + 1):

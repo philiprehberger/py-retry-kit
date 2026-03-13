@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0
+
+- Add input validation for `max_attempts`, `backoff`, and `initial_delay` in `retry()` and `async_retry()`
+- Add input validation for `failure_threshold` and `reset_timeout` in `CircuitBreaker`
+- Add comprehensive test suite (~30 tests)
+- Add API reference table to README
+
 ## 0.1.1
 
 - Add project URLs to pyproject.toml
