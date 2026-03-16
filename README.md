@@ -96,6 +96,14 @@ result = await breaker.async_call(lambda: async_fetch_data())
 | `CircuitOpenError` | Raised when circuit breaker is open |
 | `presets` | Dict of preset configs: `"aggressive"`, `"gentle"`, `"network_request"`, `"database_query"` |
 
+
+## Development
+
+```bash
+pip install -e .
+python -m pytest tests/ -v
+```
+
 ## License
 
 MIT
