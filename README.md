@@ -1,5 +1,9 @@
 # philiprehberger-retry-kit
 
+[![Tests](https://github.com/philiprehberger/py-retry-kit/actions/workflows/publish.yml/badge.svg)](https://github.com/philiprehberger/py-retry-kit/actions/workflows/publish.yml)
+[![PyPI version](https://img.shields.io/pypi/v/philiprehberger-retry-kit.svg)](https://pypi.org/project/philiprehberger-retry-kit/)
+[![License](https://img.shields.io/github/license/philiprehberger/py-retry-kit)](LICENSE)
+
 Retry with exponential backoff, circuit breaker, and presets for Python.
 
 ## Installation
