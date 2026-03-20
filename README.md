@@ -4,7 +4,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/philiprehberger-retry-kit.svg)](https://pypi.org/project/philiprehberger-retry-kit/)
 [![License](https://img.shields.io/github/license/philiprehberger/py-retry-kit)](LICENSE)
 
-Retry with exponential backoff, circuit breaker, and presets for Python.
+Async retry with exponential backoff, circuit breaker, and cancellation for Python.
 
 ## Installation
 
@@ -83,7 +83,7 @@ except CircuitOpenError:
 result = await breaker.async_call(lambda: async_fetch_data())
 ```
 
-## API Reference
+## API
 
 | Function / Class | Description |
 |---|---|
