@@ -78,6 +78,16 @@ class CircuitBreaker:
     def state(self) -> CircuitState:
         return self._state
 
+    def reset(self) -> None:
+        """Reset the circuit to CLOSED state and clear failure count.
+
+        Useful for tests and manual recovery hooks.
+        """
+        self._transition(CircuitState.CLOSED)
+        self._failures = 0
+        self._last_failure_time = 0.0
+        self._half_open_attempts = 0
+
     def _transition(self, to: CircuitState) -> None:
         if self._state != to:
             from_state = self._state

@@ -61,6 +61,25 @@ def database_query(*, jitter: bool = False) -> dict[str, Any]:
     return _apply_jitter(config, jitter)
 
 
+def aggressive(*, jitter: bool = False) -> dict[str, Any]:
+    """Aggressive retry preset: short delays, many attempts.
+
+    Suggested for transient failures where success is highly likely
+    on a retry and latency budget is tight.
+
+    Config: max_attempts=10, initial_delay=0.05, max_delay=1.0,
+    jitter=True, exponential_base=1.5.
+    """
+    config: dict[str, Any] = {
+        "max_attempts": 10,
+        "backoff": "exponential",
+        "initial_delay": 0.05,
+        "max_delay": 1.0,
+        "jitter": True,
+    }
+    return _apply_jitter(config, jitter)
+
+
 presets = {
     "aggressive": {
         "max_attempts": 5,

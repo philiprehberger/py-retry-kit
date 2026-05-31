@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (2026-05-30)
+
+- Add `aggressive` preset for short-delay high-attempt retries
+- Add `CircuitBreaker.reset()` for explicit state reset
+
 ## 0.3.1 (2026-03-31)
 
 - Standardize README to 3-badge format with emoji Support section

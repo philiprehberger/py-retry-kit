@@ -14,6 +14,7 @@ from philiprehberger_retry_kit import (
     CircuitOpenError,
     CircuitState,
     presets,
+    aggressive,
 )
 
 
@@ -278,3 +279,45 @@ def test_async_retry_exhaustion():
         raise RuntimeError("async fail")
     with pytest.raises(RetryError):
         asyncio.run(async_retry(fn, max_attempts=2, initial_delay=0, jitter=False))
+
+
+# --- aggressive preset ---
+
+def test_aggressive_preset_returns_documented_config():
+    config = aggressive()
+    assert config["max_attempts"] == 10
+    assert config["initial_delay"] == 0.05
+    assert config["max_delay"] == 1.0
+    assert config["backoff"] == "exponential"
+    assert config["jitter"] is True
+
+
+def test_aggressive_preset_spreads_into_retry():
+    result = retry(lambda: "ok", **{**aggressive(), "jitter": False})
+    assert result == "ok"
+
+
+# --- CircuitBreaker.reset ---
+
+def test_circuit_breaker_reset_returns_to_closed():
+    cb = CircuitBreaker(failure_threshold=2, reset_timeout=999.0)
+    for _ in range(2):
+        with pytest.raises(RuntimeError):
+            cb.call(lambda: (_ for _ in ()).throw(RuntimeError("fail")))
+    assert cb.state == CircuitState.OPEN
+
+    cb.reset()
+    assert cb.state == CircuitState.CLOSED
+    assert cb._failures == 0
+
+    result = cb.call(lambda: "ok")
+    assert result == "ok"
+
+
+def test_circuit_breaker_reset_is_idempotent():
+    cb = CircuitBreaker(failure_threshold=2, reset_timeout=10.0)
+    assert cb.state == CircuitState.CLOSED
+    cb.reset()
+    cb.reset()
+    assert cb.state == CircuitState.CLOSED
+    assert cb._failures == 0

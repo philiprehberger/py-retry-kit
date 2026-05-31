@@ -1,6 +1,6 @@
 from .retry import retry, async_retry, RetryError
 from .circuit_breaker import CircuitBreaker, CircuitOpenError, CircuitState
-from .presets import presets, exponential, gentle, network_request, database_query
+from .presets import presets, exponential, gentle, network_request, database_query, aggressive
 
 __all__ = [
     "retry",
@@ -14,4 +14,5 @@ __all__ = [
     "gentle",
     "network_request",
     "database_query",
+    "aggressive",
 ]

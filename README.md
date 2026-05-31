@@ -65,12 +65,13 @@ result = retry(lambda: gentle_op(), **presets["gentle"])
 Preset functions accept a `jitter` parameter that randomizes the initial delay by a factor between 0.8 and 1.2, helping to spread out retry storms.
 
 ```python
-from philiprehberger_retry_kit import exponential, gentle, network_request, database_query, retry
+from philiprehberger_retry_kit import exponential, gentle, network_request, database_query, aggressive, retry
 
 result = retry(lambda: fetch_data(), **exponential(jitter=True))
 result = retry(lambda: gentle_op(), **gentle(jitter=True))
 result = retry(lambda: api_call(), **network_request(jitter=True))
 result = retry(lambda: db_query(), **database_query(jitter=True))
+result = retry(lambda: transient_op(), **aggressive(jitter=True))
 ```
 
 ### Circuit Breaker
@@ -110,6 +111,16 @@ On `__enter__`, the breaker checks if the circuit is open and raises `CircuitOpe
 result = await breaker.async_call(lambda: async_fetch_data())
 ```
 
+### Resetting a Circuit Breaker
+
+```python
+breaker = CircuitBreaker(failure_threshold=2, reset_timeout=10.0)
+
+# ...after failures have tripped the breaker open
+breaker.reset()  # Clear failure count and return to CLOSED state
+result = breaker.call(lambda: fetch_data())
+```
+
 ## API
 
 | Function / Class | Description |
@@ -119,6 +130,7 @@ result = await breaker.async_call(lambda: async_fetch_data())
 | `CircuitBreaker(failure_threshold=5, reset_timeout=30.0, half_open_max_attempts=1, on_state_change=None, on_circuit_open=None)` | Circuit breaker that fails fast after repeated failures |
 | `CircuitBreaker.call(fn)` | Execute function through the circuit breaker |
 | `CircuitBreaker.async_call(fn)` | Async version of `call()` |
+| `CircuitBreaker.reset()` | Reset the circuit to CLOSED state and clear failure count |
 | `CircuitBreaker.__enter__` / `__exit__` | Context manager support for circuit breaker |
 | `RetryError` | Raised when all retry attempts fail (`.attempts`, `.last_error`) |
 | `CircuitOpenError` | Raised when circuit breaker is open |
@@ -127,6 +139,7 @@ result = await breaker.async_call(lambda: async_fetch_data())
 | `gentle(jitter=False)` | Preset function returning gentle config, with optional jitter |
 | `network_request(jitter=False)` | Preset function returning network request config, with optional jitter |
 | `database_query(jitter=False)` | Preset function returning database query config, with optional jitter |
+| `aggressive(jitter=False)` | Preset function returning aggressive config (short delays, many attempts), with optional jitter |
 
 ## Development
 
